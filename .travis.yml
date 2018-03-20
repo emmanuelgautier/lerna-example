@@ -1,36 +1,46 @@
+sudo: false
+language: node_js
+
 if: tag IS blank
 
 git:
   depth: 1
-sudo: false
-
-matrix:
-  fast_finish: true
 
 cache: yarn
 
-language: node_js
+before_script:
+  - chmod 777 test.sh
+  - chmod 777 build.sh
+
 node_js:
   - "node"
   - "lts/*"
+
 env:
   - COMPONENT=@emmanuelgautier/lerna-example-hapi
   - COMPONENT=@emmanuelgautier/lerna-example-react-app
   - COMPONENT=@emmanuelgautier/lerna-example-validators
+
+
+script:
+  - ./test.sh
+  - ./build.sh
+
 stages:
   - test
-  - build
-  - name: publish
-    if: branch = master
+  - publish
+  - deploy
+
 jobs:
   include:
-    - script: yarn bootstrap --scope=$COMPONENT
-    - script: yarn lerna run --scope=$COMPONENT test:ci
-    - stage: build
-      script: yarn lerna --scope=$COMPONENT build
     - stage: publish
       env:
         - COMPONENT=all
       script: yarn publish
     - stage: deploy
       script: skip
+      env: none
+
+notifications:
+  email:
+    on_failure: never
