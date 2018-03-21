@@ -4,4 +4,5 @@ set -xe
 
 COMPONENT="$1"
 
-yarn bootstrap --scope=$COMPONENT && yarn lerna run --scope=$COMPONENT test:ci
+yarn bootstrap --scope=$COMPONENT
+yarn lerna run --scope=$COMPONENT test:ci
